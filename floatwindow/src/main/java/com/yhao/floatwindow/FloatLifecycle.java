@@ -51,7 +51,17 @@ class FloatLifecycle extends BroadcastReceiver implements Application.ActivityLi
         mLifecycleListener = lifecycleListener;
         mHandler = new Handler();
         ((Application) context).registerActivityLifecycleCallbacks(this);
-        context.registerReceiver(this, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
+        // 创建 IntentFilter
+        IntentFilter filter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            // ✅ 必须指定一个导出标志
+            context.registerReceiver(this, filter, android.content.Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            // Android 12 及以下版本
+            context.registerReceiver(this, filter);
+        }
     }
 
     public static void setResumedListener(ResumedListener resumedListener) {
