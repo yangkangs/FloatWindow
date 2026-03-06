@@ -92,9 +92,13 @@ class FloatLifecycle extends BroadcastReceiver implements Application.ActivityLi
         }
         resumeCount++;
         if (needShow(activity)) {
-            mLifecycleListener.onShow();
+            if (mLifecycleListener != null) {
+                mLifecycleListener.onShow();
+            }
         } else {
-            mLifecycleListener.onHide();
+            if (mLifecycleListener != null) {
+                mLifecycleListener.onHide();
+            }
         }
         if (appBackground) {
             appBackground = false;
@@ -110,7 +114,9 @@ class FloatLifecycle extends BroadcastReceiver implements Application.ActivityLi
             public void run() {
                 if (resumeCount == 0) {
                     appBackground = true;
-                    mLifecycleListener.onBackToDesktop();
+                    if (mLifecycleListener != null) {
+                        mLifecycleListener.onBackToDesktop();
+                    }
                 }
             }
         }, delay);
@@ -127,7 +133,9 @@ class FloatLifecycle extends BroadcastReceiver implements Application.ActivityLi
     public void onActivityStopped(Activity activity) {
         startCount--;
         if (startCount == 0) {
-            mLifecycleListener.onBackToDesktop();
+            if (mLifecycleListener != null) {
+                mLifecycleListener.onBackToDesktop();
+            }
         }
     }
 
@@ -137,7 +145,9 @@ class FloatLifecycle extends BroadcastReceiver implements Application.ActivityLi
         if (action != null && action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
             String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
             if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
-                mLifecycleListener.onBackToDesktop();
+                if (mLifecycleListener != null) {
+                    mLifecycleListener.onBackToDesktop();
+                }
             }
         }
     }
